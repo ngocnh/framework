@@ -72,7 +72,7 @@ class BroadcastNotificationCreated implements ShouldBroadcast
     {
         return array_merge($this->data, [
             'id' => $this->notification->id,
-            'type' => get_class($this->notification),
+            'type' => $this->broadcastAs(),
         ]);
     }
 
@@ -90,5 +90,12 @@ class BroadcastNotificationCreated implements ShouldBroadcast
         $class = str_replace('\\', '.', get_class($this->notifiable));
 
         return $class.'.'.$this->notifiable->getKey();
+    }
+
+    public function broadcastAs()
+    {
+        return method_exists($this->notification, 'broadcastAs')
+            ? $this->notification->broadcastAs()
+            : get_class($this->notification);
     }
 }
